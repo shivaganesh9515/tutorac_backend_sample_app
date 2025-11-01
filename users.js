@@ -41,7 +41,8 @@ router.post("/", (req, res) => {
 
 // READ - Get all users
 router.get("/", (req, res) => {
-  res.json({ data: users });
+  // res.json({ data: users });
+  res.status(404).json({ data: users });
 });
 
 // Params
@@ -50,12 +51,33 @@ router.get("/", (req, res) => {
 
 // DATA
 
+router.get("/data/:someId", (req, res) => {
+  try {
+    // const user = { name: "Test User" };
+    const user = undefined;
+    console.log(user.name); // ❌ This will throw an error
+
+    res.json({ message: "This is executed properly" });
+  } catch (error) {
+    console.error("❌ Error caught:", error.message);
+
+    res.status(500).json({
+      message: "Something went wrong on the server",
+      error: error.message, // Optional: show actual error for learning
+    });
+  }
+});
+
 // READ - Get single user by ID
 router.get("/:id", (req, res) => {
   console.log("Path Params:", req.params);
+
   console.log("Query Params:", req.query);
   const user = users.find((u) => u.id === parseInt(req.params.id));
-  if (!user) return res.status(404).json({ message: "User not found" });
+  if (!user)
+    return res
+      .status(404)
+      .json({ message: "User not found, please try again" });
   res.json({ data: user });
 });
 
