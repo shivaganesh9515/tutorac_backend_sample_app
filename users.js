@@ -25,20 +25,11 @@ let users = [
   },
 ];
 
-const authMiddleware = (req, res, next) => {
-  const token = req.headers["authorization"];
-  if (token === "mysecrettoken") {
-    next();
-  } else {
-    res.status(403).json({ message: "Forbidden: Invalid token" });
-  }
-};
-
 // CREATE - Add a new user
 router.post("/", createUser(users));
 
 // READ - Get all users
-router.get("/", authMiddleware, (req, res) => {
+router.get("/", (req, res) => {
   // res.json({ data: users });
   res.status(404).json({ data: users });
 });

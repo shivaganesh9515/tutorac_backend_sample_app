@@ -1,6 +1,9 @@
 const express = require("express");
 const app = express();
 const path = require("path");
+const mongoose = require("mongoose");
+const userRoutes = require("./routes/userRoutes");
+const postRoutes = require("./routes/postRoutes");
 
 app.use(express.json());
 app.set("view engine", "ejs");
@@ -41,7 +44,9 @@ const errorHandler = (err, req, res, next) => {
 // 🧩 Error Handling Middleware (must be defined LAST)
 app.use(errorHandler);
 
-const port = 3000;
+app.use("/test-routes", require("./playWithRoutes"));
+
+const port = 3300;
 const users = require("./users");
 const posts = require("./posts");
 
@@ -49,8 +54,8 @@ app.get("/", logger, addRequestTime, (req, res) => {
   res.send(`Request received at: ${req.requestTime}`);
 });
 
-app.use("/api/users", users);
-app.use("/api/posts", posts);
+app.use("/api/users", userRoutes);
+app.use("/api/posts", postRoutes);
 
 app.get("/htmlFile", function (req, res) {
   res.sendFile(path.join(__dirname, "/index.html"));
@@ -65,6 +70,11 @@ app.get("/dynamicHtml", (req, res) => {
   };
   res.render("home", { user });
 });
+
+mongoose
+  .connect("mongodb://127.0.0.1:27017/sampleMongoDB") // Url of the mongodb server
+  .then(() => console.log("✅ MongoDB connected successfully"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
